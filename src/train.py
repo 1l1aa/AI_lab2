@@ -8,6 +8,8 @@ import pandas as pd
 import sklearn
 import mlflow
 import mlflow.sklearn
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.ensemble import HistGradientBoostingRegressor
@@ -57,6 +59,7 @@ def log_experiment(run_name, model, X_train, X_test, y_train, y_test, params, cv
         mlflow.log_metrics({f"test_{k}": v for k, v in metrics.items()})
         print(f"{run_name} test: {metrics}")
 
+        # Сохраняем таблицу прогнозов
         pred_df = pd.DataFrame({
             "y_true": y_test.values,
             "y_pred": y_pred,
@@ -67,7 +70,44 @@ def log_experiment(run_name, model, X_train, X_test, y_train, y_test, params, cv
             mlflow.log_artifact(f.name)
         os.unlink(f.name)
 
-        mlflow.sklearn.log_model(model, name="model", skops_trusted_types=["numpy.dtype"])
+        # --- ГЕНЕРАЦИЯ И ЛОГИРОВАНИЕ ГРАФИКОВ ---
+        os.makedirs("reports", exist_ok=True)
+        
+        # 1. График остатков
+        plt.figure(figsize=(8, 4))
+        sns.scatterplot(x=y_pred, y=y_test.values - y_pred)
+        plt.axhline(0, color="red", linestyle="--")
+        plt.title(f"Residuals - {run_name}")
+        plt.xlabel("Predicted")
+        plt.ylabel("Residual (True - Pred)")
+        plt.tight_layout()
+        res_path = f"reports/{run_name}_residuals.png"
+        plt.savefig(res_path)
+        plt.close()
+        mlflow.log_artifact(res_path)
+
+        # 2. График Прогноз vs Истина
+        plt.figure(figsize=(8, 4))
+        sns.scatterplot(x=y_test.values, y=y_pred)
+        plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')
+        plt.title(f"Predictions vs Actual - {run_name}")
+        plt.xlabel("Actual Weight")
+        plt.ylabel("Predicted Weight")
+        plt.tight_layout()
+        pred_path = f"reports/{run_name}_pred_vs_true.png"
+        plt.savefig(pred_path)
+        plt.close()
+        mlflow.log_artifact(pred_path)
+
+        # --- СОХРАНЕНИЕ МОДЕЛИ ---
+        mlflow.sklearn.log_model(
+            model,
+            name="model",
+            skops_trusted_types=[
+                "numpy.dtype",
+                "sklearn.ensemble._hist_gradient_boosting.predictor.TreePredictor"
+            ],
+        )
         return metrics
 
 
