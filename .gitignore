@@ -1,0 +1,11 @@
+# Игнорировать папку с экспериментами MLflow
+mlruns/
+mlflow.db
+
+# Игнорировать кэш Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Игнорировать сохраненные модели
+reg.joblib
