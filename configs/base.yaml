@@ -1,0 +1,15 @@
+data:
+  path: "fish_participant.csv"
+  test_size: 0.2
+  random_state: 42
+
+features:
+  numeric: ["Length3", "Height", "Width"]
+  categorical: ["Species"]
+
+model:
+  type: "Ridge"
+  alpha: 1.0
+
+mlflow:
+  experiment_name: "Default"
