@@ -18,7 +18,7 @@ def remove_outliers(df: pd.DataFrame, numeric_cols: list) -> pd.DataFrame:
             lower = q1 - 1.5 * iqr
             upper = q3 + 1.5 * iqr
             df = df[(df[col] >= lower) & (df[col] <= upper)]
-    return df.reset_index(drop=True)
+    return df  # <--- Убрали .reset_index(drop=True)
 
 
 def split_data(df: pd.DataFrame):
