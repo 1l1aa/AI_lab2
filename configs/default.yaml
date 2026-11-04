@@ -1,0 +1,67 @@
+seed: 42
+
+data:
+  path: assets/data/Fish.csv
+  target: Weight
+  drop_zero_weight: true
+  version: "fish.csv@v1"
+
+split:
+  test_size: 0.2
+  val_size: 0.25
+  group_round_decimals: 2
+
+experiments:
+  E0:
+    name: "naive_baseline_mean"
+    model: dummy_regressor
+    strategy: mean
+    features: []
+    scaling: false
+    categorical: false
+    log_target: false
+
+  E1:
+    name: "linear_regression_log_target"
+    model: linear_regression
+    features: ["Volume", "Length3", "Height", "Width", "Species"]
+    scaling: true
+    categorical: true
+    log_target: true
+
+  E2:
+    name: "ridge_regression_cv"
+    model: ridge
+    features: ["Volume", "Length3", "Height", "Width", "Species"]
+    scaling: true
+    categorical: true
+    log_target: false
+    tune_alpha: true
+    alpha_grid: [0.01, 0.1, 1.0, 10.0, 100.0]
+
+  E3:
+    name: "random_forest"
+    model: random_forest
+    features: ["Volume", "Length3", "Height", "Width", "Species"]
+    scaling: false
+    categorical: true
+    log_target: false
+    rf_params:
+      n_estimators: 300
+      max_depth: 15
+      min_samples_leaf: 2
+      random_state: 42
+      n_jobs: -1
+
+  E4:
+    name: "linear_regression_no_species"
+    model: linear_regression
+    features: ["Volume", "Length3", "Height", "Width"]
+    scaling: true
+    categorical: false
+    log_target: false
+
+mlflow:
+  experiment_name: "lab02_fishgrow"
+  tracking_uri: "file:./mlruns"
+  log_models: true
