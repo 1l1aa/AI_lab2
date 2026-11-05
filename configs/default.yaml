@@ -54,12 +54,12 @@ experiments:
       n_jobs: -1
 
   E4:
-    name: "linear_regression_no_species"
+    name: "linear_regression_with_vproxy"
     model: linear_regression
-    features: ["Volume", "Length3", "Height", "Width"]
+    features: ["Volume", "Length3", "Height", "Width", "Species"]
     scaling: true
-    categorical: false
-    log_target: false
+    categorical: true
+    log_target: true
 
 mlflow:
   experiment_name: "lab02_fishgrow"
