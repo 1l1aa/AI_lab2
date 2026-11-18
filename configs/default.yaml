@@ -1,0 +1,86 @@
+seed: 42
+
+data:
+  path: assets/data/Fish.csv
+  drop_zero_weight: true
+
+split:
+  test_size: 0.2
+  val_size: 0.25
+  group_round_decimals: 2
+
+mlflow:
+  tracking_uri: "sqlite:///mlflow.db"
+  experiment_name: "fish_weight_E0_E4"
+  log_models: true
+
+experiments:
+  E0_mean:
+    name: "naive mean"
+    model: dummy_mean
+    features: [Length3]
+    categorical: false
+    scaling: false
+  E0_median:
+    name: "naive median"
+    model: dummy_median
+    features: [Length3]
+    categorical: false
+    scaling: false
+
+  E1_linear:
+    name: "linear baseline"
+    model: linear
+    features: [Length1, Length2, Length3, Height, Width]
+    categorical: false
+    scaling: true
+  E1_linear_log:
+    name: "linear log1p target"
+    model: linear
+    features: [Length1, Length2, Length3, Height, Width]
+    categorical: false
+    scaling: true
+    target_transform: log1p
+
+  E2_ridge:
+    name: "ridge CV"
+    model: ridge_cv
+    features: [Length1, Length2, Length3, Height, Width]
+    categorical: false
+    scaling: true
+    needs_groups: true
+  E2_elastic:
+    name: "elastic net CV"
+    model: elastic_cv
+    features: [Length1, Length2, Length3, Height, Width]
+    categorical: false
+    scaling: true
+    needs_groups: true
+
+  E3_hgb_search:
+    name: "HGB randomized search"
+    model: hgb_search
+    features: [Length1, Length2, Length3, Height, Width]
+    categorical: false  # Отключено, так как Species нет в датасете
+    scaling: false
+    needs_groups: true
+
+  E4a_linear_no_volume:
+    name: "linear without Vproxy"
+    model: linear
+    features: [Length1, Length2, Length3, Height, Width]
+    categorical: false
+    scaling: true
+  E4b_linear_with_volume:
+    name: "linear with Vproxy"
+    model: linear
+    features: [Length1, Length2, Length3, Height, Width, Vproxy]
+    categorical: false
+    scaling: true
+  E4b_ridge_with_volume:
+    name: "ridge with Vproxy"
+    model: ridge_cv
+    features: [Length1, Length2, Length3, Height, Width, Vproxy]
+    categorical: false
+    scaling: true
+    needs_groups: true
