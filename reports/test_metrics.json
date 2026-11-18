@@ -1,7 +1,6 @@
 {
   "best_experiment": "E3",
   "name": "linear_all_features_with_species",
-  "rmse": 72.87765599630377,
   "mae": 53.4874421267869,
   "r2": 0.9480060002169889
 }
