@@ -22,7 +22,7 @@
 - Крупные особи Pike (1550–1650 г) оставлены намеренно.
 
 ## Лучшая модель
-- **Эксперимент:** E3 (`linear_all_features_with_species`)
+- **Эксперимент:** E4 (`linear_all_features_with_species`)
 - **Модель:** LinearRegression
 - **Пайплайн:** StandardScaler + OneHotEncoder + LinearRegression.
 
